@@ -1,32 +1,51 @@
 import { useState, useEffect } from "react";
 
-const Stopwatch = () => {
-  const [time, setTime] = useState(0); // Elapsed time in seconds
+const Countdown = () => {
+  const [initialTime, setInitialTime] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
     let timerId;
-    if (isRunning) {
+    if (isRunning && timeLeft > 0) {
       timerId = setInterval(() => {
-        setTime((prev) => prev + 1);
+        setTimeLeft((prev) => prev - 1);
       }, 1000);
     }
 
-    // Cleanup: clear interval when not running or unmounting
+    // Cleanup: clear interval
     return () => clearInterval(timerId);
-  }, [isRunning]);
+  }, [isRunning, timeLeft]);
 
-  const handleStart = () => setIsRunning(true);
-  const handleStop = () => setIsRunning(false);
+  const handleStart = () => {
+    if (timeLeft > 0) {
+      setIsRunning(true);
+    }
+  };
+
+  const handleStop = () => {
+    setIsRunning(false);
+  };
+
   const handleReset = () => {
     setIsRunning(false);
-    setTime(0);
+    setTimeLeft(initialTime);
+  };
+
+  const handleInputChange = (e) => {
+    const value = Number(e.target.value);
+    setInitialTime(value);
+    setTimeLeft(value);
+    setIsRunning(false);
   };
 
   return (
     <div>
-      <h2>Stopwatch: {time} seconds</h2>
-      <button onClick={handleStart} disabled={isRunning}>
+      <h2>Countdown Timer</h2>
+      <label>Set Time (seconds): </label>
+      <input type="number" value={initialTime} onChange={handleInputChange} />
+      <p>Time Left: {timeLeft} seconds</p>
+      <button onClick={handleStart} disabled={isRunning || timeLeft === 0}>
         Start
       </button>
       <button onClick={handleStop} disabled={!isRunning}>
@@ -37,4 +56,4 @@ const Stopwatch = () => {
   );
 };
 
-export default Stopwatch;
+export default Countdown;
