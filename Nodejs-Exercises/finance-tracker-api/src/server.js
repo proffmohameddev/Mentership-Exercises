@@ -1,0 +1,8 @@
+import "dotenv/config"; // must stay first so env vars are ready for the other files
+import app from "./app.js";
+import { connectDB } from "./config/db.js";
+
+const PORT = process.env.PORT || 3000;
+
+await connectDB();
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
